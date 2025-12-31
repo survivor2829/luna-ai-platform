@@ -15,8 +15,8 @@ export default function AdminLayout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-400">加载中...</div>
+      <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center">
+        <div className="text-[#AEAEB2]">加载中...</div>
       </div>
     )
   }
@@ -33,15 +33,15 @@ export default function AdminLayout() {
   const isActive = (path) => location.pathname === path
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-[#F5F5F7] flex">
       {/* Sidebar */}
-      <aside className="w-60 bg-white border-r border-gray-200 flex flex-col">
+      <aside className="w-60 bg-white border-r border-[#E5E5E7] flex flex-col">
         <div className="p-6">
           <Link to="/" className="flex items-center gap-2">
             <span className="text-xl">🤖</span>
-            <span className="font-semibold text-gray-900">Luna AI</span>
+            <span className="font-semibold text-[#1D1D1F]">Luna AI</span>
           </Link>
-          <p className="text-gray-400 text-xs mt-1">管理后台</p>
+          <p className="text-[#AEAEB2] text-xs mt-1">管理后台</p>
         </div>
 
         <nav className="flex-1 px-3">
@@ -49,8 +49,8 @@ export default function AdminLayout() {
             to="/admin/agents"
             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm mb-1 transition-colors ${
               isActive('/admin/agents') || isActive('/admin')
-                ? 'bg-gray-100 text-gray-900 font-medium'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-[#F5F5F7] text-[#1D1D1F] font-medium'
+                : 'text-[#86868B] hover:bg-[#F5F5F7]'
             }`}
           >
             <span>🤖</span>
@@ -60,8 +60,8 @@ export default function AdminLayout() {
             to="/admin/users"
             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
               isActive('/admin/users')
-                ? 'bg-gray-100 text-gray-900 font-medium'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-[#F5F5F7] text-[#1D1D1F] font-medium'
+                : 'text-[#86868B] hover:bg-[#F5F5F7]'
             }`}
           >
             <span>👥</span>
@@ -69,12 +69,12 @@ export default function AdminLayout() {
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-[#E5E5E7]">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">{user.phone}</span>
+            <span className="text-sm text-[#86868B]">{user.phone}</span>
             <button
               onClick={handleLogout}
-              className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sm text-[#AEAEB2] hover:text-[#86868B] transition-colors"
             >
               退出
             </button>

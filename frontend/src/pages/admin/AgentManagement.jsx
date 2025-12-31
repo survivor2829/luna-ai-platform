@@ -90,43 +90,43 @@ export default function AgentManagement() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">智能体管理</h1>
+        <h1 className="text-2xl font-semibold text-[#1D1D1F]">智能体管理</h1>
         <button
           onClick={openCreate}
-          className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors"
+          className="px-4 py-2 bg-[#0066CC] hover:bg-[#0055AA] text-white text-sm font-medium rounded-lg transition-colors"
         >
           + 添加智能体
         </button>
       </div>
 
       {loading ? (
-        <div className="text-gray-400">加载中...</div>
+        <div className="text-[#AEAEB2]">加载中...</div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#E5E5E7] overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-100">
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">名称</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">分类</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">等级要求</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">排序</th>
-                <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+              <tr className="border-b border-[#E5E5E7]">
+                <th className="px-6 py-4 text-left text-xs font-medium text-[#86868B] uppercase tracking-wider">名称</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-[#86868B] uppercase tracking-wider">分类</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-[#86868B] uppercase tracking-wider">等级要求</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-[#86868B] uppercase tracking-wider">状态</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-[#86868B] uppercase tracking-wider">排序</th>
+                <th className="px-6 py-4 text-right text-xs font-medium text-[#86868B] uppercase tracking-wider">操作</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[#E5E5E7]">
               {agents.map(agent => (
-                <tr key={agent.id} className="hover:bg-gray-50">
+                <tr key={agent.id} className="hover:bg-[#F5F5F7]">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <span className="text-xl">{agent.icon}</span>
-                      <span className="text-gray-900 font-medium">{agent.name}</span>
+                      <span className="text-[#1D1D1F] font-medium">{agent.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-500 text-sm">
+                  <td className="px-6 py-4 text-[#86868B] text-sm">
                     {agent.category === 'custom' ? '定制' : '通用'}
                   </td>
-                  <td className="px-6 py-4 text-gray-500 text-sm">
+                  <td className="px-6 py-4 text-[#86868B] text-sm">
                     {agent.tier_required}
                   </td>
                   <td className="px-6 py-4">
@@ -138,11 +138,11 @@ export default function AgentManagement() {
                       {agent.status === 'active' ? '启用' : '即将上线'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-500 text-sm">{agent.sort_order}</td>
+                  <td className="px-6 py-4 text-[#86868B] text-sm">{agent.sort_order}</td>
                   <td className="px-6 py-4 text-right">
                     <button
                       onClick={() => openEdit(agent)}
-                      className="text-blue-600 hover:text-blue-700 text-sm mr-4"
+                      className="text-[#0066CC] hover:text-[#0055AA] text-sm mr-4"
                     >
                       编辑
                     </button>
@@ -157,7 +157,7 @@ export default function AgentManagement() {
               ))}
               {agents.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan="6" className="px-6 py-12 text-center text-[#AEAEB2]">
                     暂无智能体
                   </td>
                 </tr>
@@ -171,105 +171,105 @@ export default function AgentManagement() {
       {showModal && (
         <div className="fixed inset-0 bg-black/20 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">
+            <div className="px-6 py-4 border-b border-[#E5E5E7]">
+              <h2 className="text-lg font-semibold text-[#1D1D1F]">
                 {editingId ? '编辑智能体' : '添加智能体'}
               </h2>
             </div>
 
             <div className="p-6 grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">名称</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">名称</label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">图标</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">图标</label>
                 <input
                   type="text"
                   value={form.icon}
                   onChange={(e) => setForm({ ...form, icon: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">描述</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">描述</label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                   rows="2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">分类</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">分类</label>
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 >
                   <option value="general">通用</option>
                   <option value="custom">定制</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">等级要求</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">等级要求</label>
                 <select
                   value={form.tier_required}
                   onChange={(e) => setForm({ ...form, tier_required: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 >
                   <option value="365">365会员</option>
                   <option value="3980">尊享会员</option>
                 </select>
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">API Endpoint</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">API Endpoint</label>
                 <input
                   type="text"
                   value={form.api_endpoint}
                   onChange={(e) => setForm({ ...form, api_endpoint: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                   placeholder="https://api.coze.com/..."
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">API Token</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">API Token</label>
                 <input
                   type="password"
                   value={form.api_token}
                   onChange={(e) => setForm({ ...form, api_token: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Project ID</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">Project ID</label>
                 <input
                   type="text"
                   value={form.project_id}
                   onChange={(e) => setForm({ ...form, project_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">排序</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">排序</label>
                 <input
                   type="number"
                   value={form.sort_order}
                   onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">状态</label>
+                <label className="block text-sm font-medium text-[#1D1D1F] mb-2">状态</label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC]"
                 >
                   <option value="active">启用</option>
                   <option value="coming_soon">即将上线</option>
@@ -277,17 +277,17 @@ export default function AgentManagement() {
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[#E5E5E7] flex justify-end gap-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors"
+                className="px-4 py-2 text-[#86868B] hover:text-[#1D1D1F] text-sm font-medium transition-colors"
               >
                 取消
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 text-white text-sm font-medium rounded-lg transition-colors"
+                className="px-4 py-2 bg-[#0066CC] hover:bg-[#0055AA] disabled:bg-[#AEAEB2] text-white text-sm font-medium rounded-lg transition-colors"
               >
                 {saving ? '保存中...' : '保存'}
               </button>

@@ -2,12 +2,16 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --color-primary: #2563eb;
-  --color-text: #1a1a1a;
-  --color-text-secondary: #666666;
-  --color-border: #e5e5e5;
-  --color-bg: #ffffff;
-  --color-bg-secondary: #fafafa;
+  /* Apple风格灰色调 2025 */
+  --color-primary: #0066CC;          /* 科技蓝 - 强调色 */
+  --color-primary-hover: #0055AA;
+  --color-text: #1D1D1F;             /* 深灰黑 - 主文字 */
+  --color-text-secondary: #86868B;   /* 中灰 - 次要文字 */
+  --color-text-tertiary: #AEAEB2;    /* 浅灰 - 占位符 */
+  --color-border: #E5E5E7;           /* 边框色 */
+  --color-bg: #F5F5F7;               /* 页面背景 - Apple灰白 */
+  --color-bg-secondary: #FFFFFF;     /* 卡片背景 - 纯白 */
+  --color-bg-tertiary: #FAFAFA;      /* 次级背景 */
 }
 
 body {
@@ -42,12 +46,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #AEAEB2;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #86868B;
 }
 
 /* Hide scrollbar on mobile for cleaner look */

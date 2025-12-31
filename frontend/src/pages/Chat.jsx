@@ -39,7 +39,7 @@ function SafeMarkdown({ content }) {
   return (
     <MarkdownErrorBoundary fallback={safeContent}>
       <ReactMarkdown
-        className="prose prose-sm sm:prose-base max-w-none prose-gray prose-p:my-2 prose-headings:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-pre:bg-gray-100 prose-pre:text-gray-800 prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none"
+        className="prose prose-sm sm:prose-base max-w-none prose-gray prose-p:my-2 prose-headings:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-pre:bg-[#F5F5F7] prose-pre:text-[#1D1D1F] prose-code:text-[#1D1D1F] prose-code:bg-[#F5F5F7] prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none"
       >
         {safeContent}
       </ReactMarkdown>
@@ -161,19 +161,19 @@ export default function Chat() {
 
   if (!agent) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-400">加载中...</div>
+      <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center">
+        <div className="text-[#AEAEB2]">加载中...</div>
       </div>
     )
   }
 
   return (
-    <div className="h-[100dvh] bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 h-12 sm:h-14 flex items-center flex-shrink-0 safe-area-top">
+    <div className="h-[100dvh] bg-[#F5F5F7] flex flex-col">
+      <header className="bg-white border-b border-[#E5E5E7] px-4 sm:px-6 h-12 sm:h-14 flex items-center flex-shrink-0 safe-area-top">
         <div className="max-w-3xl mx-auto w-full flex items-center gap-3 sm:gap-4">
           <Link
             to="/"
-            className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors -ml-2 sm:ml-0"
+            className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center text-[#AEAEB2] hover:text-[#86868B] transition-colors -ml-2 sm:ml-0"
           >
             <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -182,12 +182,12 @@ export default function Chat() {
           </Link>
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <span className="text-lg sm:text-xl">{agent.icon}</span>
-            <span className="font-medium text-gray-900 truncate text-sm sm:text-base">{agent.name}</span>
+            <span className="font-medium text-[#1D1D1F] truncate text-sm sm:text-base">{agent.name}</span>
           </div>
           {messages.length > 0 && (
             <button
               onClick={handleClearHistory}
-              className="w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 flex items-center justify-center text-gray-400 hover:text-gray-600 sm:hover:bg-gray-100 rounded-lg transition-colors text-sm"
+              className="w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 flex items-center justify-center text-[#AEAEB2] hover:text-[#86868B] sm:hover:bg-[#F5F5F7] rounded-lg transition-colors text-sm"
               title="清空对话"
             >
               <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +204,7 @@ export default function Chat() {
           {messages.length === 0 && (
             <div className="text-center py-12 sm:py-20">
               <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{agent.icon}</div>
-              <p className="text-gray-500 text-sm sm:text-base">我是{agent.name}，有什么可以帮助你的？</p>
+              <p className="text-[#86868B] text-sm sm:text-base">我是{agent.name}，有什么可以帮助你的？</p>
             </div>
           )}
 
@@ -216,12 +216,12 @@ export default function Chat() {
               <div
                 className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-4 py-3 ${
                   msg.role === 'user'
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-white border border-gray-200 text-gray-800'
+                    ? 'bg-[#0066CC] text-white'
+                    : 'bg-white border border-[#E5E5E7] text-[#1D1D1F]'
                 }`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="flex items-center gap-2 mb-2 text-xs text-gray-400">
+                  <div className="flex items-center gap-2 mb-2 text-xs text-[#AEAEB2]">
                     <span>{agent.icon}</span>
                     <span>{agent.name}</span>
                   </div>
@@ -232,7 +232,7 @@ export default function Chat() {
                       <SafeMarkdown content={msg.content} />
                     ) : (
                       loading && idx === messages.length - 1 ? (
-                        <span className="inline-block w-1.5 h-4 bg-gray-300 animate-pulse rounded"></span>
+                        <span className="inline-block w-1.5 h-4 bg-[#AEAEB2] animate-pulse rounded"></span>
                       ) : null
                     )
                   ) : (
@@ -253,7 +253,7 @@ export default function Chat() {
         </div>
       </div>
 
-      <div className="bg-white border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0 safe-area-bottom">
+      <div className="bg-white border-t border-[#E5E5E7] px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0 safe-area-bottom">
         <div className="max-w-3xl mx-auto flex gap-2 sm:gap-3">
           <input
             ref={inputRef}
@@ -263,15 +263,15 @@ export default function Chat() {
             onKeyDown={handleKeyDown}
             placeholder="输入消息..."
             disabled={loading}
-            className="flex-1 px-4 py-3 sm:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-shadow"
+            className="flex-1 px-4 py-3 sm:py-2.5 bg-[#F5F5F7] border border-[#E5E5E7] rounded-xl text-base sm:text-sm text-[#1D1D1F] placeholder-[#AEAEB2] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:border-transparent disabled:opacity-50 transition-shadow"
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className="px-5 sm:px-5 py-3 sm:py-2.5 bg-gray-900 hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium rounded-xl transition-colors min-w-[60px] sm:min-w-[80px]"
+            className="px-5 sm:px-5 py-3 sm:py-2.5 bg-[#0066CC] hover:bg-[#0055AA] active:bg-[#004499] disabled:bg-[#E5E5E7] disabled:text-[#AEAEB2] text-white font-medium rounded-xl transition-colors min-w-[60px] sm:min-w-[80px]"
           >
             {loading ? (
-              <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+              <span className="inline-block w-4 h-4 border-2 border-[#AEAEB2] border-t-transparent rounded-full animate-spin"></span>
             ) : '发送'}
           </button>
         </div>

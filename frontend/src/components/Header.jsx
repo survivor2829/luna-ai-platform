@@ -22,39 +22,39 @@ export default function Header() {
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-white border-b border-[#E5E5E7] sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 sm:gap-3" onClick={closeMenu}>
           <span className="text-xl sm:text-2xl">🤖</span>
-          <span className="text-base sm:text-lg font-semibold text-gray-900">Luna AI</span>
-          <span className="text-gray-400 text-xs sm:text-sm hidden sm:inline">智能体平台</span>
+          <span className="text-base sm:text-lg font-semibold text-[#1D1D1F]">Luna AI</span>
+          <span className="text-[#AEAEB2] text-xs sm:text-sm hidden sm:inline">智能体平台</span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           {user ? (
             <>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-[#86868B]">
                 {tierLabels[user.tier] || user.tier}
               </span>
               <Link
                 to="/profile"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-[#86868B] hover:text-[#1D1D1F] transition-colors"
               >
                 {user.phone}
               </Link>
               {user.is_admin && (
                 <Link
                   to="/admin"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#86868B] hover:text-[#1D1D1F] transition-colors"
                 >
                   管理后台
                 </Link>
               )}
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-sm text-[#AEAEB2] hover:text-[#86868B] transition-colors"
               >
                 退出
               </button>
@@ -63,13 +63,13 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-[#86868B] hover:text-[#1D1D1F] transition-colors"
               >
                 登录
               </Link>
               <Link
                 to="/register"
-                className="text-sm text-blue-600 hover:text-blue-700 transition-colors"
+                className="text-sm text-[#0066CC] hover:text-[#0055AA] transition-colors"
               >
                 注册
               </Link>
@@ -80,7 +80,7 @@ export default function Header() {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden w-11 h-11 flex items-center justify-center text-gray-600 hover:text-gray-900 -mr-2"
+          className="md:hidden w-11 h-11 flex items-center justify-center text-[#86868B] hover:text-[#1D1D1F] -mr-2"
           aria-label="菜单"
         >
           {menuOpen ? (
@@ -97,17 +97,17 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white">
+        <div className="md:hidden border-t border-[#E5E5E7] bg-white">
           <div className="px-4 py-3 space-y-1">
             {user ? (
               <>
-                <div className="px-3 py-2 text-sm text-gray-500 border-b border-gray-100 mb-2">
+                <div className="px-3 py-2 text-sm text-[#86868B] border-b border-[#E5E5E7] mb-2">
                   {user.phone} · {tierLabels[user.tier] || user.tier}
                 </div>
                 <Link
                   to="/profile"
                   onClick={closeMenu}
-                  className="block px-3 py-3 text-base text-gray-700 hover:bg-gray-50 rounded-lg"
+                  className="block px-3 py-3 text-base text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-lg"
                 >
                   个人中心
                 </Link>
@@ -115,14 +115,14 @@ export default function Header() {
                   <Link
                     to="/admin"
                     onClick={closeMenu}
-                    className="block px-3 py-3 text-base text-gray-700 hover:bg-gray-50 rounded-lg"
+                    className="block px-3 py-3 text-base text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-lg"
                   >
                     管理后台
                   </Link>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-3 py-3 text-base text-gray-700 hover:bg-gray-50 rounded-lg"
+                  className="block w-full text-left px-3 py-3 text-base text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-lg"
                 >
                   退出登录
                 </button>
@@ -132,14 +132,14 @@ export default function Header() {
                 <Link
                   to="/login"
                   onClick={closeMenu}
-                  className="block px-3 py-3 text-base text-gray-700 hover:bg-gray-50 rounded-lg"
+                  className="block px-3 py-3 text-base text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-lg"
                 >
                   登录
                 </Link>
                 <Link
                   to="/register"
                   onClick={closeMenu}
-                  className="block px-3 py-3 text-base text-blue-600 hover:bg-blue-50 rounded-lg"
+                  className="block px-3 py-3 text-base text-[#0066CC] hover:bg-[#F5F5F7] rounded-lg"
                 >
                   注册账号
                 </Link>
