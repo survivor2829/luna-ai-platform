@@ -1,0 +1,281 @@
+import { useState, useEffect, useRef, Component } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import { agents, chatWithAgent, getToken } from '../services/api'
+
+// 错误边界组件 - 防止 Markdown 渲染崩溃导致整个页面白屏
+class MarkdownErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Markdown render error:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // 降级显示纯文本
+      return <span className="whitespace-pre-wrap">{this.props.fallback}</span>
+    }
+    return this.props.children
+  }
+}
+
+// 安全的 Markdown 渲染组件
+function SafeMarkdown({ content }) {
+  // 确保 content 是字符串
+  const safeContent = typeof content === 'string' ? content : String(content || '')
+
+  if (!safeContent) {
+    return null
+  }
+
+  return (
+    <MarkdownErrorBoundary fallback={safeContent}>
+      <ReactMarkdown
+        className="prose prose-sm sm:prose-base max-w-none prose-gray prose-p:my-2 prose-headings:my-3 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 prose-pre:bg-gray-100 prose-pre:text-gray-800 prose-code:text-gray-800 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none"
+      >
+        {safeContent}
+      </ReactMarkdown>
+    </MarkdownErrorBoundary>
+  )
+}
+
+export default function Chat() {
+  const { agentId } = useParams()
+  const navigate = useNavigate()
+
+  const [agent, setAgent] = useState(null)
+  const [messages, setMessages] = useState([])
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const messagesEndRef = useRef(null)
+  const inputRef = useRef(null)
+  const isFetching = useRef(false)
+
+  // 加载数据
+  useEffect(() => {
+    if (isFetching.current) return
+    isFetching.current = true
+
+    if (!getToken()) {
+      window.location.href = '/login'
+      return
+    }
+
+    async function load() {
+      try {
+        const [agentData, historyData] = await Promise.all([
+          agents.get(agentId),
+          agents.getHistory(agentId)
+        ])
+
+        setAgent(agentData)
+
+        if (historyData.messages?.length > 0) {
+          setMessages(historyData.messages.map(m => ({
+            role: m.role,
+            content: String(m.content || '')
+          })))
+        }
+      } catch (err) {
+        console.error('Load failed:', err)
+        window.location.href = '/'
+      }
+    }
+
+    load()
+  }, [])
+
+  // 滚动到底部
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  // 移动端键盘
+  useEffect(() => {
+    const handleResize = () => {
+      if (document.activeElement === inputRef.current) {
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
+      }
+    }
+    window.visualViewport?.addEventListener('resize', handleResize)
+    return () => window.visualViewport?.removeEventListener('resize', handleResize)
+  }, [])
+
+  const handleSend = async () => {
+    if (!input.trim() || loading) return
+
+    const userMessage = input.trim()
+    setInput('')
+    setError('')
+
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
+    setMessages(prev => [...prev, { role: 'assistant', content: '' }])
+    setLoading(true)
+
+    try {
+      await chatWithAgent(agentId, userMessage, (text) => {
+        // 确保 text 是字符串
+        const safeText = typeof text === 'string' ? text : String(text || '')
+        setMessages(prev => {
+          const updated = [...prev]
+          updated[updated.length - 1] = { role: 'assistant', content: safeText }
+          return updated
+        })
+      })
+    } catch (err) {
+      setError(err.message || '发送失败')
+      setMessages(prev => prev.slice(0, -1))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  const handleClearHistory = async () => {
+    if (!window.confirm('确定要清空对话记录吗？')) return
+    try {
+      await agents.clearHistory(agentId)
+      setMessages([])
+    } catch (err) {
+      setError('清空失败: ' + err.message)
+    }
+  }
+
+  if (!agent) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-400">加载中...</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="h-[100dvh] bg-gray-50 flex flex-col">
+      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 h-12 sm:h-14 flex items-center flex-shrink-0 safe-area-top">
+        <div className="max-w-3xl mx-auto w-full flex items-center gap-3 sm:gap-4">
+          <Link
+            to="/"
+            className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors -ml-2 sm:ml-0"
+          >
+            <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="hidden sm:inline">← 返回</span>
+          </Link>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span className="text-lg sm:text-xl">{agent.icon}</span>
+            <span className="font-medium text-gray-900 truncate text-sm sm:text-base">{agent.name}</span>
+          </div>
+          {messages.length > 0 && (
+            <button
+              onClick={handleClearHistory}
+              className="w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 flex items-center justify-center text-gray-400 hover:text-gray-600 sm:hover:bg-gray-100 rounded-lg transition-colors text-sm"
+              title="清空对话"
+            >
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span className="hidden sm:inline">清空</span>
+            </button>
+          )}
+        </div>
+      </header>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-6">
+          {messages.length === 0 && (
+            <div className="text-center py-12 sm:py-20">
+              <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{agent.icon}</div>
+              <p className="text-gray-500 text-sm sm:text-base">我是{agent.name}，有什么可以帮助你的？</p>
+            </div>
+          )}
+
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-4 py-3 ${
+                  msg.role === 'user'
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-white border border-gray-200 text-gray-800'
+                }`}
+              >
+                {msg.role === 'assistant' && (
+                  <div className="flex items-center gap-2 mb-2 text-xs text-gray-400">
+                    <span>{agent.icon}</span>
+                    <span>{agent.name}</span>
+                  </div>
+                )}
+                <div className="leading-relaxed text-[15px] sm:text-base">
+                  {msg.role === 'assistant' ? (
+                    msg.content ? (
+                      <SafeMarkdown content={msg.content} />
+                    ) : (
+                      loading && idx === messages.length - 1 ? (
+                        <span className="inline-block w-1.5 h-4 bg-gray-300 animate-pulse rounded"></span>
+                      ) : null
+                    )
+                  ) : (
+                    <span className="whitespace-pre-wrap">{msg.content}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {error && (
+            <div className="text-center text-red-500 text-sm py-2">
+              {error}
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+
+      <div className="bg-white border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0 safe-area-bottom">
+        <div className="max-w-3xl mx-auto flex gap-2 sm:gap-3">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="输入消息..."
+            disabled={loading}
+            className="flex-1 px-4 py-3 sm:py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-shadow"
+          />
+          <button
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
+            className="px-5 sm:px-5 py-3 sm:py-2.5 bg-gray-900 hover:bg-gray-800 active:bg-gray-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium rounded-xl transition-colors min-w-[60px] sm:min-w-[80px]"
+          >
+            {loading ? (
+              <span className="inline-block w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+            ) : '发送'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
