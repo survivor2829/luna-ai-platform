@@ -9,7 +9,7 @@ from ..models import User, Agent, ChatMessage
 from ..schemas import AgentResponse, ChatRequest, ChatMessageResponse, ChatHistoryResponse
 from ..auth import get_current_user, get_current_user_optional
 from ..permissions import can_access_agent
-from ..services.coze import call_coze_agent
+from ..services.coze import call_coze_agent, clear_session
 
 logger = logging.getLogger(__name__)
 
@@ -102,11 +102,20 @@ def clear_chat_history(
     current_user: User = Depends(get_current_user)
 ):
     """清空与智能体的对话历史"""
+    # 获取智能体的 project_id
+    agent = db.query(Agent).filter(Agent.id == agent_id).first()
+
+    # 清除数据库中的对话记录
     db.query(ChatMessage).filter(
         ChatMessage.user_id == current_user.id,
         ChatMessage.agent_id == agent_id
     ).delete()
     db.commit()
+
+    # 同时清除 Coze 会话缓存，让下次对话开始新会话
+    if agent and agent.project_id:
+        clear_session(agent.project_id, current_user.id)
+
     return {"message": "对话记录已清空"}
 
 
@@ -166,7 +175,8 @@ async def chat_with_agent(
                 api_endpoint,
                 api_token,
                 project_id,
-                message
+                message,
+                user_id=user_id  # 传递用户ID用于会话管理
             ):
                 full_response.append(chunk)
                 # SSE格式返回给前端
