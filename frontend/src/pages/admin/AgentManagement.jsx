@@ -11,7 +11,18 @@ const defaultForm = {
   project_id: '',
   tier_required: '365',
   status: 'active',
-  sort_order: 0
+  sort_order: 0,
+  quick_prompts: []
+}
+
+// 解析JSON字符串为数组
+const parseQuickPrompts = (str) => {
+  try {
+    const parsed = JSON.parse(str || '[]')
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
 }
 
 export default function AgentManagement() {
@@ -55,7 +66,8 @@ export default function AgentManagement() {
       project_id: agent.project_id,
       tier_required: agent.tier_required,
       status: agent.status,
-      sort_order: agent.sort_order
+      sort_order: agent.sort_order,
+      quick_prompts: parseQuickPrompts(agent.quick_prompts)
     })
     setShowModal(true)
   }
@@ -63,10 +75,15 @@ export default function AgentManagement() {
   const handleSave = async () => {
     setSaving(true)
     try {
+      // 将quick_prompts数组转换为JSON字符串
+      const dataToSave = {
+        ...form,
+        quick_prompts: JSON.stringify(form.quick_prompts || [])
+      }
       if (editingId) {
-        await admin.agents.update(editingId, form)
+        await admin.agents.update(editingId, dataToSave)
       } else {
-        await admin.agents.create(form)
+        await admin.agents.create(dataToSave)
       }
       setShowModal(false)
       loadAgents()
@@ -75,6 +92,26 @@ export default function AgentManagement() {
     } finally {
       setSaving(false)
     }
+  }
+
+  // 快捷提问操作
+  const addQuickPrompt = () => {
+    if (form.quick_prompts.length >= 5) {
+      alert('最多添加5条快捷提问')
+      return
+    }
+    setForm({ ...form, quick_prompts: [...form.quick_prompts, ''] })
+  }
+
+  const updateQuickPrompt = (index, value) => {
+    const newPrompts = [...form.quick_prompts]
+    newPrompts[index] = value
+    setForm({ ...form, quick_prompts: newPrompts })
+  }
+
+  const removeQuickPrompt = (index) => {
+    const newPrompts = form.quick_prompts.filter((_, i) => i !== index)
+    setForm({ ...form, quick_prompts: newPrompts })
   }
 
   const handleDelete = async (id) => {
@@ -274,6 +311,46 @@ export default function AgentManagement() {
                   <option value="active">启用</option>
                   <option value="coming_soon">即将上线</option>
                 </select>
+              </div>
+
+              {/* 快捷提问编辑 */}
+              <div className="col-span-2">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-[#1D1D1F]">快捷提问</label>
+                  <span className="text-xs text-[#AEAEB2]">{form.quick_prompts?.length || 0}/5</span>
+                </div>
+                <p className="text-xs text-[#86868B] mb-3">用户进入聊天时显示的快捷提问按钮</p>
+                <div className="space-y-2">
+                  {form.quick_prompts?.map((prompt, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={prompt}
+                        onChange={(e) => updateQuickPrompt(idx, e.target.value)}
+                        placeholder={`快捷提问 ${idx + 1}`}
+                        className="flex-1 px-3 py-2 border border-[#E5E5E7] rounded-lg text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0066CC] text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeQuickPrompt(idx)}
+                        className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                  {(form.quick_prompts?.length || 0) < 5 && (
+                    <button
+                      type="button"
+                      onClick={addQuickPrompt}
+                      className="w-full py-2 border border-dashed border-[#E5E5E7] rounded-lg text-sm text-[#86868B] hover:border-[#0066CC] hover:text-[#0066CC] transition-colors"
+                    >
+                      + 添加快捷提问
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

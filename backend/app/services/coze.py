@@ -1,3 +1,4 @@
+import os
 import httpx
 import json
 import logging
@@ -12,8 +13,15 @@ from fastapi import HTTPException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 禁用SSL警告
-warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+# SSL验证配置
+# 生产环境应设置 COZE_SSL_VERIFY=true
+# 开发环境如果Coze API有证书问题，可以设置为 false
+SSL_VERIFY = os.getenv("COZE_SSL_VERIFY", "false").lower() == "true"
+
+if not SSL_VERIFY:
+    # 仅在禁用SSL验证时才禁用警告
+    warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+    logger.warning("SSL verification is DISABLED for Coze API. Set COZE_SSL_VERIFY=true in production.")
 
 # 会话管理：为每个 project_id + user_id 维护一个 session_id
 _session_cache: dict[str, str] = {}
@@ -31,7 +39,7 @@ async def get_http_client() -> httpx.AsyncClient:
     global _http_client
     if _http_client is None or _http_client.is_closed:
         _http_client = httpx.AsyncClient(
-            verify=False,
+            verify=SSL_VERIFY,
             timeout=httpx.Timeout(120.0, connect=10.0, read=120.0),
             limits=httpx.Limits(
                 max_keepalive_connections=20,
@@ -118,7 +126,7 @@ async def call_coze_agent(
         try:
             # 每次请求创建新客户端，避免复用可能已失效的连接
             async with httpx.AsyncClient(
-                verify=False,
+                verify=SSL_VERIFY,
                 timeout=httpx.Timeout(timeout, connect=10.0, read=timeout),
                 http2=False
             ) as client:

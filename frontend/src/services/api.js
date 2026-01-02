@@ -106,6 +106,16 @@ export async function chatWithAgent(agentId, message, onChunk) {
   return fullText
 }
 
+// 用户统计
+export const stats = {
+  getUserStats: () => request("/stats/user")
+}
+
+// 用户反馈
+export const feedback = {
+  submit: (data) => request("/feedback", { method: "POST", body: JSON.stringify(data) })
+}
+
 // 管理后台
 export const admin = {
   agents: {
@@ -117,5 +127,9 @@ export const admin = {
   users: {
     list: () => request("/admin/users"),
     update: (id, data) => request(`/admin/users/${id}`, { method: "PUT", body: JSON.stringify(data) })
+  },
+  feedbacks: {
+    list: (status) => request(`/admin/feedbacks${status ? `?status=${status}` : ''}`),
+    updateStatus: (id, status) => request(`/admin/feedbacks/${id}`, { method: "PUT", body: JSON.stringify({ status }) })
   }
 }

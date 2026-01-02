@@ -45,6 +45,9 @@ class Agent(Base):
     status = Column(String(20), default="active")  # active / coming_soon
     sort_order = Column(Integer, default=0)
 
+    # 快捷提问（JSON数组）
+    quick_prompts = Column(Text, default="[]")
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
 

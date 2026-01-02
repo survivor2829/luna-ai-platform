@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { agents } from '../services/api'
+import { agents, stats } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 import Header from '../components/Header'
 
 export default function Home() {
   const [agentList, setAgentList] = useState([])
   const [loading, setLoading] = useState(true)
+  const [userStats, setUserStats] = useState(null)
+  const [statsLoading, setStatsLoading] = useState(false)
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -16,6 +18,17 @@ export default function Home() {
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
+
+  // 获取用户统计数据
+  useEffect(() => {
+    if (user) {
+      setStatsLoading(true)
+      stats.getUserStats()
+        .then(setUserStats)
+        .catch(() => {}) // 静默处理错误
+        .finally(() => setStatsLoading(false))
+    }
+  }, [user])
 
   const customAgents = agentList.filter(a => a.category === 'custom')
   const generalAgents = agentList.filter(a => a.category === 'general')
@@ -77,6 +90,88 @@ export default function Home() {
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-12">
+        {/* 价值统计模块 - 仅登录用户显示 */}
+        {user && (
+          <div className="bg-white rounded-xl border border-[#E5E5E7] p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm">
+            {statsLoading ? (
+              // 骨架屏
+              <div className="animate-pulse">
+                <div className="h-5 w-40 bg-[#E5E5E7] rounded mb-4"></div>
+                <div className="grid grid-cols-3 gap-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="text-center">
+                      <div className="h-8 w-20 bg-[#E5E5E7] rounded mx-auto mb-2"></div>
+                      <div className="h-4 w-16 bg-[#E5E5E7] rounded mx-auto"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : userStats && userStats.total_conversations > 0 ? (
+              <>
+                <h3 className="text-[#1D1D1F] font-semibold mb-4 text-sm sm:text-base">
+                  🎉 您已通过 Luna AI
+                </h3>
+
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
+                  {/* 节省成本 */}
+                  <div className="text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-[#0066CC]">
+                      ¥{userStats.saved_cost.toLocaleString()}
+                    </div>
+                    <div className="text-xs sm:text-sm text-[#86868B]">节省人力成本</div>
+                    <div className="text-[10px] sm:text-xs text-[#AEAEB2]">按每次¥15计算</div>
+                  </div>
+
+                  {/* 节省时间 */}
+                  <div className="text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-[#0066CC]">
+                      {userStats.saved_time_minutes >= 60
+                        ? `${Math.round(userStats.saved_time_minutes / 60)}小时`
+                        : `${userStats.saved_time_minutes}分钟`}
+                    </div>
+                    <div className="text-xs sm:text-sm text-[#86868B]">节省时间</div>
+                    <div className="text-[10px] sm:text-xs text-[#AEAEB2]">按每次5分钟计算</div>
+                  </div>
+
+                  {/* AI协助次数 */}
+                  <div className="text-center">
+                    <div className="text-xl sm:text-2xl font-bold text-[#0066CC]">
+                      {userStats.total_conversations}次
+                    </div>
+                    <div className="text-xs sm:text-sm text-[#86868B]">AI协助</div>
+                    <div className="text-[10px] sm:text-xs text-[#AEAEB2]">累计对话</div>
+                  </div>
+                </div>
+
+                {/* 智能推荐 */}
+                {userStats.recommended_agent && (
+                  <div className="bg-[#F5F5F7] rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-lg flex-shrink-0">{userStats.recommended_agent.icon}</span>
+                      <span className="text-xs sm:text-sm text-[#1D1D1F] truncate">
+                        💡 试试「{userStats.recommended_agent.name}」
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => navigate(`/chat/${userStats.recommended_agent.id}`)}
+                      className="text-xs sm:text-sm text-[#0066CC] hover:underline flex-shrink-0 ml-2"
+                    >
+                      去体验 →
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : userStats ? (
+              // 新用户欢迎语
+              <div className="text-center py-2">
+                <div className="text-2xl mb-2">👋</div>
+                <h3 className="text-[#1D1D1F] font-semibold mb-1">欢迎使用 Luna AI</h3>
+                <p className="text-sm text-[#86868B]">选择下方的智能体开始对话，体验AI的强大能力</p>
+              </div>
+            ) : null}
+          </div>
+        )}
+
         {loading ? (
           <div className="text-center text-[#AEAEB2] py-20">加载中...</div>
         ) : (

@@ -67,6 +67,17 @@ export default function AdminLayout() {
             <span>👥</span>
             <span>用户管理</span>
           </Link>
+          <Link
+            to="/admin/feedbacks"
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
+              isActive('/admin/feedbacks')
+                ? 'bg-[#F5F5F7] text-[#1D1D1F] font-medium'
+                : 'text-[#86868B] hover:bg-[#F5F5F7]'
+            }`}
+          >
+            <span>💬</span>
+            <span>用户反馈</span>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-[#E5E5E7]">

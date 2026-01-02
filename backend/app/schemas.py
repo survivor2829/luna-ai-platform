@@ -57,6 +57,7 @@ class AgentCreate(AgentBase):
     tier_required: str = "365"
     status: str = "active"
     sort_order: int = 0
+    quick_prompts: str = "[]"
 
 
 class AgentUpdate(BaseModel):
@@ -70,6 +71,7 @@ class AgentUpdate(BaseModel):
     tier_required: Optional[str] = None
     status: Optional[str] = None
     sort_order: Optional[int] = None
+    quick_prompts: Optional[str] = None
 
 
 class AgentResponse(BaseModel):
@@ -81,6 +83,7 @@ class AgentResponse(BaseModel):
     tier_required: str
     status: str
     sort_order: int
+    quick_prompts: str = "[]"
     created_at: datetime
     can_access: bool = False
 
@@ -100,6 +103,7 @@ class AgentAdminResponse(BaseModel):
     tier_required: str
     status: str
     sort_order: int
+    quick_prompts: str = "[]"
     created_at: datetime
 
     class Config:

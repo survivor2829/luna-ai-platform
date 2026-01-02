@@ -47,6 +47,32 @@ function SafeMarkdown({ content }) {
   )
 }
 
+// 思考中动画组件
+function ThinkingIndicator() {
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-2">
+        <span className="text-[#86868B] text-sm">思考中</span>
+        <div className="flex gap-1">
+          <span
+            className="w-1.5 h-1.5 bg-[#0066CC] rounded-full animate-bounce"
+            style={{ animationDelay: '0ms', animationDuration: '600ms' }}
+          />
+          <span
+            className="w-1.5 h-1.5 bg-[#0066CC] rounded-full animate-bounce"
+            style={{ animationDelay: '150ms', animationDuration: '600ms' }}
+          />
+          <span
+            className="w-1.5 h-1.5 bg-[#0066CC] rounded-full animate-bounce"
+            style={{ animationDelay: '300ms', animationDuration: '600ms' }}
+          />
+        </div>
+      </div>
+      <span className="text-[#AEAEB2] text-xs">通常需要2-5秒</span>
+    </div>
+  )
+}
+
 export default function Chat() {
   const { agentId } = useParams()
   const navigate = useNavigate()
@@ -202,9 +228,48 @@ export default function Chat() {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-6">
           {messages.length === 0 && (
-            <div className="text-center py-12 sm:py-20">
+            <div className="text-center py-8 sm:py-12 px-4">
               <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{agent.icon}</div>
-              <p className="text-[#86868B] text-sm sm:text-base">我是{agent.name}，有什么可以帮助你的？</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-[#1D1D1F] mb-2">
+                我是{agent.name}
+              </h2>
+              <p className="text-[#86868B] text-sm sm:text-base mb-6">{agent.description || '有什么可以帮助你的？'}</p>
+
+              {/* 快捷提问按钮 */}
+              {(() => {
+                // 解析quick_prompts，处理JSON解析错误
+                let prompts = []
+                try {
+                  prompts = JSON.parse(agent.quick_prompts || '[]')
+                  if (!Array.isArray(prompts)) prompts = []
+                } catch {
+                  prompts = []
+                }
+                // 如果没有配置，使用默认提问
+                if (prompts.length === 0) {
+                  prompts = ['你能帮我做什么？', '给我举个使用案例']
+                }
+                return (
+                  <div className="space-y-2 max-w-sm mx-auto">
+                    <p className="text-sm text-[#86868B] mb-3">试试这样问我：</p>
+                    {prompts.map((prompt, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setInput(prompt)
+                          setTimeout(() => {
+                            const btn = document.querySelector('[data-send-btn]')
+                            btn?.click()
+                          }, 100)
+                        }}
+                        className="w-full text-left px-4 py-3 bg-white border border-[#E5E5E7] rounded-xl text-sm text-[#1D1D1F] hover:bg-[#F5F5F7] hover:border-[#0066CC]/30 transition-colors"
+                      >
+                        "{prompt}"
+                      </button>
+                    ))}
+                  </div>
+                )
+              })()}
             </div>
           )}
 
@@ -232,7 +297,7 @@ export default function Chat() {
                       <SafeMarkdown content={msg.content} />
                     ) : (
                       loading && idx === messages.length - 1 ? (
-                        <span className="inline-block w-1.5 h-4 bg-[#AEAEB2] animate-pulse rounded"></span>
+                        <ThinkingIndicator />
                       ) : null
                     )
                   ) : (
@@ -266,6 +331,7 @@ export default function Chat() {
             className="flex-1 px-4 py-3 sm:py-2.5 bg-[#F5F5F7] border border-[#E5E5E7] rounded-xl text-base sm:text-sm text-[#1D1D1F] placeholder-[#AEAEB2] focus:outline-none focus:ring-2 focus:ring-[#0066CC] focus:border-transparent disabled:opacity-50 transition-shadow"
           />
           <button
+            data-send-btn
             onClick={handleSend}
             disabled={loading || !input.trim()}
             className="px-5 sm:px-5 py-3 sm:py-2.5 bg-[#0066CC] hover:bg-[#0055AA] active:bg-[#004499] disabled:bg-[#E5E5E7] disabled:text-[#AEAEB2] text-white font-medium rounded-xl transition-colors min-w-[60px] sm:min-w-[80px]"

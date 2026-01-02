@@ -33,6 +33,18 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
+          <Link
+            to="/tools"
+            className="text-sm text-[#86868B] hover:text-[#1D1D1F] transition-colors"
+          >
+            AI工具
+          </Link>
+          <Link
+            to="/prompts"
+            className="text-sm text-[#86868B] hover:text-[#1D1D1F] transition-colors"
+          >
+            提示词库
+          </Link>
           {user ? (
             <>
               <span className="text-sm text-[#86868B]">
@@ -99,6 +111,20 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden border-t border-[#E5E5E7] bg-white">
           <div className="px-4 py-3 space-y-1">
+            <Link
+              to="/tools"
+              onClick={closeMenu}
+              className="block px-3 py-3 text-base text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-lg"
+            >
+              AI工具
+            </Link>
+            <Link
+              to="/prompts"
+              onClick={closeMenu}
+              className="block px-3 py-3 text-base text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-lg"
+            >
+              提示词库
+            </Link>
             {user ? (
               <>
                 <div className="px-3 py-2 text-sm text-[#86868B] border-b border-[#E5E5E7] mb-2">

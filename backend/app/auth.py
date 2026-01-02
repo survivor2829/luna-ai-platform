@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -7,7 +8,11 @@ from sqlalchemy.orm import Session
 from .database import get_db
 from .models import User
 
-SECRET_KEY = "your-secret-key-change-in-production"
+# 从环境变量读取JWT密钥，必须设置
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY environment variable is not set. Please set it before starting the server.")
+
 ALGORITHM = "HS256"
 EXPIRE_HOURS = 24 * 7  # 7天
 
