@@ -1,4 +1,6 @@
-const API_BASE = "http://localhost:8000/api"
+// 生产环境使用相对路径 /api（由Nginx代理）
+// 开发环境使用 localhost:8000
+const API_BASE = import.meta.env.VITE_API_BASE || "/api"
 
 // 获取token
 export const getToken = () => localStorage.getItem("token")
